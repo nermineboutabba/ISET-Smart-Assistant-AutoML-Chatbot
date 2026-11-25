@@ -1,0 +1,33 @@
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# Secrets & Environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+.venv/
+*.egg-info/
+
+# Node & Angular
+node_modules/
+.angular/
+dist/
+.vercel/
+npm-debug.log*
+
+# Project-specific
+Treatment App/flask_data_science_app/uploads/*.pkl
+*.db
+*.sqlite

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ISET Chatbot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-jQzTq0OktRfYlczRG7fZRuHgdkmRZLzcdBsp2w8Oj5yL+CV9yXbHvIvPXoOz6Ho69uB4cn79Aa3ihqslL7+9Vg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
+  <style>
+    .feedback {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.feedback button {
+  margin-left: 8px;
+  background-color: var(--accent, #28a745);
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.feedback button:hover {
+  background-color: #218838;
+}
+
+    .thinking .dots span {
+  animation: blink 1.4s infinite;
+  opacity: 0;
+}
+
+.thinking .dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.thinking .dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.thinking .dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+    :root {
+      --bg: #ffffff;
+      --sidebar-bg: #f7f7f8;
+      --border: #e3e3e3;
+      --text: #111;
+      --accent: #10a37f;
+      --sidebar-text:transparent;;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      padding: 12px;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar.hidden {
+      width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      display: flex;
+      margin-bottom: 12px;
+    }
+    
+    .toggle-btn {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      font-size: 18px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    
+
+    .history-action {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 8px;
+      background: transparent;
+      border: 1px solid var(--sidebar-text);
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .history-section {
+      margin-top: 20px;
+    }
+
+    .history-label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .history-entry {
+      padding: 10px;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 6px;
+      border: 1px solid transparent;
+    }
+    #chat-log .default-message {
+      text-align: center;
+      font-size: 48px;  /* Make the text larger */
+      font-weight: bold;
+      color: black;  /* Set the text color to black */
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .history-entry:hover {
+      border: 1px solid var(--accent);background: rgba(16, 163, 127, 0.1);  /* Optional: Add hover effect */
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      justify-content: flex-end; /* Ensure chat stays at the bottom */
+      padding: 24px;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      padding: 12px;
+      background: transparent; /* No background for the chat container */
+
+    }
+
+    .message {
+      
+      max-width: 80%;
+      margin-bottom: 16px;
+      padding: 14px 18px;
+      border-radius: 16px;
+      line-height: 1.6;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    /* Popup styling */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: transparent;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .popup img {
+      max-width: 100px;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: #d3d3d3; /* Light grey background for user */
+      color: black;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background: transparent; /* No background for the bot */
+      color: black;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      padding: 10px 16px;
+      gap: 12px;
+      margin-top: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: transparent;
+    }
+
+    button[type="submit"],
+    .input-container button[type="button"] {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #444;
+    }
+
+    .source {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+    #question {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      padding: 10px;
+      outline: none;
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar-header">
+      <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+    <aside class="sidebar" id="history-panel">
+    
+      <button class="history-action" onclick="chooseModel()">
+        <i class="fas fa-brain"></i> Model Chooser
+      </button>
+
+    </aside>
+
+    <main class="main">
+      <div class="chat-container" id="chat-log"></div>
+      <form id="chat-form" class="input-container">
+        <input type="text" id="question" placeholder="" required />
+        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        
+      </form>
+    </main>
+  </div>
+  
+  </div>
+  <script>
+    const form = document.getElementById('chat-form');
+    const chatLog = document.getElementById('chat-log');
+    const questionInput = document.getElementById('question');
+    const popup = document.getElementById('assistant-popup');
+    const placeholderText = 'Ask anything...';
+    let currentIndex = 0;
+    
+    async function sendFeedback(feedback, question, answer, source) {
+      alert(`Feedback: ${feedback}`);
+      console.log(`Question: ${question}`);
+  try {
+    const response = await fetch('/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        feedback,
+        question,
+        scraped_answer: answer,
+        source
+      })
+    });
+
+    const result = await response.json();
+    alert(result.message);
+
+    // Optional: If "No", you may want to auto re-query
+    if (feedback === 'No') {
+      document.getElementById('user-input').value = question;
+      document.querySelector('form').dispatchEvent(new Event('submit'));
+    }
+
+  } catch (error) {
+    console.error('Error sending feedback:', error);
+  }
+}
+
+
+
+
+
+    
+   
+    function typePlaceholder() {
+      if (currentIndex < placeholderText.length) {
+        questionInput.placeholder += placeholderText.charAt(currentIndex);
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }
+
+    // Start typing the placeholder text one character at a time
+    const typingInterval = setInterval(typePlaceholder, 150); // Adjust typing speed here (150ms per character)
+   
+
+    function chooseModel() {
+  window.location.href = '/upload';
+}
+
+
+    function saveChat(title) {
+      const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+      history.unshift({ title, date: new Date().toISOString() });
+      localStorage.setItem('chatHistory', JSON.stringify(history));
+      loadHistory();
+    }
+  // Display the default message if no chat messages exist
+      if (!chatLog.innerHTML.trim()) {
+        chatLog.innerHTML = '<div class="default-message">ISET Smart Chatbot</div>';
+      }
+   
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const question = questionInput.value.trim();
+      if (!question) return;
+// Remove default message if present when user starts typing
+if (chatLog.querySelector('.default-message')) {
+  chatLog.innerHTML = '';
+}
+      chatLog.innerHTML += `<div class="message user">${question}</div>`;
+      chatLog.innerHTML += `<div class="message bot thinking">
+    <em>Thinking<span class="dots"><span>.</span><span>.</span><span>.</span></span></em></div>`;
+      chatLog.scrollTop = chatLog.scrollHeight;
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+        const loading = document.querySelector('.bot em');
+        if (loading) loading.parentElement.remove();
+// Append bot's message
+const botMessage = document.createElement('div');
+botMessage.className = 'message bot';
+botMessage.innerHTML = data.answer || "Sorry, I couldn't find an answer.";
+chatLog.appendChild(botMessage);
+
+// Only show feedback buttons if source_type is "scraped"
+if (data.source_type === 'scraped') {
+  const feedbackDiv = document.createElement('div');
+  feedbackDiv.className = 'feedback';
+  if (data.source_type === 'scraped') {
+  const feedbackDiv = document.createElement('div');
+  feedbackDiv.className = 'feedback';
+
+  const currentQuestion = questionInput.value;
+
+  const prompt = document.createElement('span');
+  prompt.textContent = 'Was this helpful?';
+
+  const yesBtn = document.createElement('button');
+  yesBtn.textContent = 'Yes';
+  yesBtn.addEventListener('click', () => {
+    sendFeedback('Yes', currentQuestion, data.answer, data.source);
+  });
+
+  const noBtn = document.createElement('button');
+  noBtn.textContent = 'No';
+  noBtn.addEventListener('click', () => {
+    sendFeedback('No', currentQuestion, data.answer, data.source);
+  });
+
+  feedbackDiv.appendChild(prompt);
+  feedbackDiv.appendChild(yesBtn);
+  feedbackDiv.appendChild(noBtn);
+  chatLog.appendChild(feedbackDiv);
+}
+
+}
+        chatLog.scrollTop = chatLog.scrollHeight;
+        questionInput.value = '';
+      } catch (error) {
+        console.error("Chat error:", error);
+      }
+    });
+  
+  </script>
+</body>
+</html>

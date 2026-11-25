@@ -1,0 +1,4 @@
+>>>Chat bot in Flutter : https://medium.com/@punithsuppar7795/building-a-chatbot-with-flutter-and-ai-a-practical-guide-b8a228775f04
+>>>chatbot template : https://www.chatbot.com/chatbot-templates/customer-service-template/
+>>>chatbot template : https://www.zendesk.com/blog/chatbot-template
+>>>flutter AI toolkit : https://docs.flutter.dev/ai-toolkit

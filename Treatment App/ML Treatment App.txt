@@ -1,0 +1,22 @@
+1/goal of the app : 
+- enter a dataset ( csv , json ...)
+- do the pre-treatment to the data
+- train the data with all the models ( KNN , clustering ...)
+- find the best model 
+- show graphics and charts
+
+2/Data: the user can enter a dataset of their choosing in a number of forms like csv or json
+
+3/Platform: Web specifiacally Flask
+
+4/Language : Python
+
+5/Deadline : 2 weeks
+
+>>>for app add :
+- changes in pdf *
+- graphs in pdf*
+
+>>>for rapport add:
+- ml ops architecture
+- talk about api's showing code and excusion
